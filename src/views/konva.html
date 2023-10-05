@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+    <title>Konva Sample</title>
+</head>
+<body>
+    <div id="konva-holder"></div>
+    <div id="position-info"></div>
+    <script>
+        
+        const stage = new Konva.Stage({
+            height: innerHeight,
+            width: innerWidth,
+            container: "konva-holder",
+        });
+        const layer = new Konva.Layer();
+        stage.add(layer);
+        
+        const positionInfo = document.getElementById("position-info");
+
+        let rect = null;
+        let isNowDrawing = false;
+
+        stage.on("mousedown", mousedownHandler);
+        stage.on("mousemove", mousemoveHandler);
+        stage.on("mouseup", mouseupHandler);
+
+        function mousedownHandler() {
+            isNowDrawing = true;
+            rect = new Konva.Rect({
+                x: stage.getPointerPosition().x,
+                y: stage.getPointerPosition().y,
+                width: 0,
+                height: 0,
+                fill: "transparent",
+                stroke: "blue"
+            });
+            layer.add(rect).batchDraw();
+        }
+
+        function mousemoveHandler() {
+            if (!isNowDrawing) return false;
+            const newWidth = stage.getPointerPosition().x - rect.x();
+            const newHeight = stage.getPointerPosition().y - rect.y();
+            rect.width(newWidth).height(newHeight);
+            layer.batchDraw();
+
+            const pointerPosition = stage.getPointerPosition();
+            const x = pointerPosition.x;
+            const y = pointerPosition.y;
+            positionInfo.innerText = `Mouse position: x = ${x}, y = ${y}`;
+        }
+
+        function mouseupHandler() {
+            isNowDrawing = false;
+            
+            // Check if the rectangle has a non-zero width and height
+            if (rect.width() > 0 && rect.height() > 0) {
+                // Show an alert with the "You have done" message
+                alert("You have done!");
+            }
+        }
+    </script>
+</body>
+</html>
